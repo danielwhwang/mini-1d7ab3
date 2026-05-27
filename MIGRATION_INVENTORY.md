@@ -20,6 +20,8 @@ All live in `~/Library/LaunchAgents/com.daisy.*.plist`. Combined size: trivial (
 
 **Recommended fix:** standardize on lowercase `~/daisy/` (matches the actual on-disk directory, requires no file moves, just plist edits).
 
+**STATUS: ✅ Done 2026-05-27.** All 9 uppercase plists edited to lowercase and reloaded. Backups at `~/daisy-mini-setup/plist-backup-20260527-101949/`. All 17 daisy agents verified loaded with exit=0.
+
 ### Hidden dependency: `com.daisy.community-group`
 
 Doesn't live in `~/daisy/` — points to `~/.scripts/community_group_message.sh`. Easy to miss in a "just rsync `~/daisy`" plan.
@@ -121,8 +123,8 @@ If anything goes wrong: reverse the above. MacBook is back online in ~5 minutes.
 
 ---
 
-## Summary of decisions still needed
+## Summary of decisions
 
-- [ ] **Casing:** standardize on lowercase `~/daisy/`?
-- [ ] **Tailscale:** include as default-yes in the migration plan, or keep optional?
-- [ ] **Backup files:** delete `*.bak-*` files in `~/daisy/` before migration to keep the package clean?
+- [x] **Casing:** standardize on lowercase `~/daisy/` — done 2026-05-27.
+- [x] **Tailscale:** include as default-yes in the migration plan.
+- [x] **Backup files:** keep — they're tiny (~10 KB) and serve as informal git-history-like snapshots. MacBook itself is the actual rollback safety net.

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Daisy Migration · Phase 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg: #FBFAF7;
+      --card: #FFFFFF;
+      --border: #E8E3D8;
+      --border-strong: #D6CFC0;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --text-faint: #9CA3AF;
+      --accent: #2D5240;
+      --accent-light: #6B8E6E;
+      --accent-bg: #F0F4F0;
+      --warn: #B45309;
+      --warn-bg: #FEF3C7;
+      --code-bg: #F5F2EB;
+      --shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; }
+    .page-header { margin-bottom: 48px; }
+
+    .eyebrow {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); font-weight: 600; margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400; font-size: 56px; line-height: 1.05;
+      letter-spacing: -0.015em; margin: 0 0 16px; color: var(--text);
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+
+    .subtitle { font-size: 17px; color: var(--text-muted); margin: 0 0 24px; max-width: 540px; }
+
+    .nav-links {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px;
+      font-size: 13px;
+    }
+    .nav-links a {
+      color: var(--accent); text-decoration: none;
+      border-bottom: 1px solid var(--accent-light);
+      padding-bottom: 1px; transition: opacity 0.15s ease;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+
+    .progress-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 24px; box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 20px;
+    }
+    .progress-meta { flex-shrink: 0; min-width: 110px; }
+    .progress-count {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 32px; line-height: 1; color: var(--accent);
+    }
+    .progress-count-sep { color: var(--text-faint); font-weight: 400; }
+    .progress-label {
+      font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-faint); margin-top: 4px;
+    }
+    .progress-bar-wrap { flex: 1; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; background: var(--accent); border-radius: 999px;
+      width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 28px 8px; margin-bottom: 20px;
+      box-shadow: var(--shadow); transition: box-shadow 0.2s ease;
+    }
+    section:hover { box-shadow: var(--shadow-hover); }
+
+    .section-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px; padding-bottom: 4px; margin-bottom: 8px;
+    }
+    .section-title { display: flex; align-items: baseline; gap: 12px; }
+    .section-num {
+      font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
+      font-size: 18px; color: var(--accent); letter-spacing: 0.02em;
+    }
+    h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400; font-size: 28px; line-height: 1.2;
+      margin: 0; letter-spacing: -0.01em;
+    }
+    .section-subtitle {
+      font-size: 14px; color: var(--text-muted); margin: 2px 0 12px;
+      padding-bottom: 8px;
+    }
+    .section-progress {
+      font-size: 13px; color: var(--text-faint);
+      font-variant-numeric: tabular-nums; font-weight: 500;
+    }
+    section.complete .section-progress { color: var(--accent); }
+
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li { border-top: 1px solid var(--border); }
+    .checklist li:first-child { border-top: none; }
+
+    .check-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0; cursor: pointer; user-select: none;
+    }
+    .check-row input[type="checkbox"] {
+      appearance: none; -webkit-appearance: none;
+      width: 20px; height: 20px;
+      border: 1.5px solid var(--border-strong); border-radius: 6px;
+      flex-shrink: 0; margin-top: 2px; cursor: pointer;
+      transition: all 0.15s ease; background: var(--card); position: relative;
+    }
+    .check-row input[type="checkbox"]:hover { border-color: var(--accent-light); }
+    .check-row input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    .check-row input[type="checkbox"]:checked::after {
+      content: ''; position: absolute; left: 5px; top: 1px;
+      width: 6px; height: 11px; border: solid white;
+      border-width: 0 2px 2px 0; transform: rotate(45deg);
+    }
+
+    .item-content { flex: 1; min-width: 0; }
+    .item-title {
+      display: block; font-size: 15.5px; font-weight: 500;
+      color: var(--text); line-height: 1.45; transition: all 0.2s ease;
+    }
+    .check-row input:checked ~ .item-content .item-title {
+      color: var(--text-faint); text-decoration: line-through;
+      text-decoration-thickness: 1px; text-decoration-color: var(--text-faint);
+    }
+    .item-note {
+      display: block; font-size: 13.5px; color: var(--text-muted);
+      margin-top: 6px; line-height: 1.55;
+    }
+    .item-note .machine {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 1px 6px; border-radius: 4px; margin-right: 6px;
+      vertical-align: 1px;
+    }
+    .machine.mbp { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .machine.mini { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-light); }
+    .check-row input:checked ~ .item-content .item-note { opacity: 0.55; }
+
+    code, .cmd {
+      font-family: 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px; background: var(--code-bg); padding: 2px 6px;
+      border-radius: 4px; color: var(--text); font-weight: 500;
+      border: 1px solid var(--border); white-space: nowrap;
+    }
+    .item-note code { font-size: 12px; padding: 1px 5px; }
+
+    .cmd-block {
+      display: block; background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 10px 12px; margin-top: 8px;
+      font-family: 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px; color: var(--text);
+      white-space: pre-wrap; word-break: break-word;
+      line-height: 1.5; overflow-x: auto;
+    }
+
+    .callout {
+      background: var(--warn-bg); border: 1px solid #FDE68A;
+      border-radius: 10px; padding: 16px 18px; margin: 0 0 20px;
+      font-size: 14px; color: #78350F; line-height: 1.55;
+    }
+    .callout strong { color: #78350F; }
+
+    .rollback {
+      background: #FEF2F2; border: 1px solid #FECACA;
+      border-radius: 14px; padding: 24px 28px;
+      margin-top: 32px;
+    }
+    .rollback h2 { color: #991B1B; font-size: 24px; }
+    .rollback ol { padding-left: 20px; margin: 12px 0 0; }
+    .rollback li { font-size: 14.5px; color: #1F2937; margin: 6px 0; line-height: 1.5; }
+    .rollback p { font-size: 14px; color: #7F1D1D; margin: 8px 0 0; }
+
+    .page-footer {
+      margin-top: 56px; padding-top: 32px;
+      border-top: 1px solid var(--border); text-align: center;
+    }
+    .footer-note { font-size: 14px; color: var(--text-muted); margin: 0 0 8px; }
+    .footer-note strong { color: var(--text); font-weight: 600; }
+    .footer-faint { font-size: 12px; color: var(--text-faint); margin: 12px 0 0; }
+    .reset-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-faint); font-size: 12px;
+      font-family: inherit; padding: 6px 12px;
+      border-radius: 999px; cursor: pointer;
+      margin-top: 16px; transition: all 0.15s ease;
+    }
+    .reset-btn:hover { color: var(--text-muted); border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .container { padding: 40px 18px 64px; }
+      h1 { font-size: 40px; }
+      .subtitle { font-size: 16px; }
+      section { padding: 22px 20px 4px; border-radius: 12px; }
+      h2 { font-size: 24px; }
+      .progress-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
+      .progress-bar-wrap { width: 100%; }
+      .check-row { padding: 14px 0; }
+      .check-row input[type="checkbox"] { width: 22px; height: 22px; }
+      .check-row input[type="checkbox"]:checked::after { left: 6px; top: 1px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <div class="eyebrow">Migration · Phase 1</div>
+      <h1>Daisy <em>Migration</em></h1>
+      <p class="subtitle">Move Daisy from MacBook to Mac Mini. Plan for one focused 4–6 hour block on a quiet morning.</p>
+      <div class="nav-links">
+        <a href="./index.html">← Phase 0 (Day 1 setup)</a>
+        <a href="https://github.com/danielwhwang/mini-1d7ab3/blob/main/MIGRATION_INVENTORY.md" target="_blank">View inventory →</a>
+      </div>
+      <div class="progress-card">
+        <div class="progress-meta">
+          <div class="progress-count">
+            <span id="overallCount">0</span><span class="progress-count-sep"> / </span><span id="overallTotal">0</span>
+          </div>
+          <div class="progress-label">complete</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="overallFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Tags:</strong> <span class="machine mbp">MBP</span> = run on MacBook, <span class="machine mini">MINI</span> = run on Mini. Don't delete anything on the MacBook until Phase 1 is verified — it's your rollback path.
+    </div>
+
+    <main>
+
+      <!-- A. Final prep on MacBook -->
+      <section data-section="prep">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">A</span>
+            <h2>Final prep</h2>
+          </div>
+          <span class="section-progress">0 / 4</span>
+        </div>
+        <p class="section-subtitle">15 minutes. Confirm baseline + pick your cutover window.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="prep-1" />
+            <span class="item-content">
+              <span class="item-title">Day 1 (Phase 0) checklist fully complete</span>
+              <span class="item-note">SSH from MacBook to Mini works, <code>whoami</code> returns <code>hwangda</code>, all dev foundations installed.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="prep-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Confirm Daisy baseline works right now</span>
+              <span class="item-note">Trigger a known automation and see Telegram message arrive:</span>
+              <code class="cmd-block">bash ~/daisy/morning_briefing.sh</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="prep-3" />
+            <span class="item-content">
+              <span class="item-title">Pick the cutover window</span>
+              <span class="item-note">Saturday morning is ideal — host check fires at 3 PM Sat, briefing fires at 7 AM Sun. Aim to be done by noon Sat. Avoid Mon morning (wedprep + briefing + practice-guide all fire).</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="prep-4" />
+            <span class="item-content">
+              <span class="item-title">Note the Mini's local IP + Tailscale name</span>
+              <span class="item-note">Keep both handy — you'll need them throughout this checklist.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- B. Package everything -->
+      <section data-section="package">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">B</span>
+            <h2>Package everything</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <p class="section-subtitle">15 minutes. Bundle all Daisy assets on the MacBook into one archive.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pkg-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Create the migration archive</span>
+              <span class="item-note">Bundles 8 paths: daisy core, LaunchAgents, .scripts, gmail OAuth, calendar OAuth, claude channels/plugins, claude settings + CLAUDE.md, claude memory.</span>
+              <code class="cmd-block">cd ~ && tar -czpf /tmp/daisy-migration.tar.gz \
+  daisy/ \
+  .scripts/ \
+  gmail-cleanup/ \
+  .config/google-calendar-mcp/ \
+  .claude/channels/ \
+  .claude/plugins/data/telegram-claude-plugins-official/ \
+  .claude/plugins/data/telegram-inline/ \
+  .claude/settings.json \
+  .claude/settings.local.json \
+  .claude/CLAUDE.md \
+  .claude/projects/-Users-hwangda/memory/ \
+  Library/LaunchAgents/com.daisy.*.plist \
+  pharmacy-schedule/ 2>&1 | tail -5
+ls -lh /tmp/daisy-migration.tar.gz</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pkg-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Verify archive contents look right</span>
+              <code class="cmd-block">tar -tzf /tmp/daisy-migration.tar.gz | head -30
+echo "---"
+tar -tzf /tmp/daisy-migration.tar.gz | wc -l   # total files</code>
+              <span class="item-note">Expect a few hundred files. The <code>-p</code> flag in step B1 preserves file permissions (critical for token files).</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pkg-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Record the checksum</span>
+              <code class="cmd-block">shasum -a 256 /tmp/daisy-migration.tar.gz</code>
+              <span class="item-note">Write it down. You'll compare against the Mini's copy to confirm clean transfer.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- C. Transfer to Mini -->
+      <section data-section="transfer">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">C</span>
+            <h2>Transfer to Mini</h2>
+          </div>
+          <span class="section-progress">0 / 2</span>
+        </div>
+        <p class="section-subtitle">5 minutes over LAN. Tiny package — ~10 MB total.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="xfer-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> SCP the archive to the Mini</span>
+              <code class="cmd-block">scp /tmp/daisy-migration.tar.gz hwangda@daisy-mini.local:/tmp/
+# or if .local doesn't resolve, use the IP:
+# scp /tmp/daisy-migration.tar.gz hwangda@192.168.x.x:/tmp/</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="xfer-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Verify checksum matches</span>
+              <code class="cmd-block">shasum -a 256 /tmp/daisy-migration.tar.gz</code>
+              <span class="item-note">Should match the SHA from step B3. If different, redo the SCP.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- D. Install on Mini -->
+      <section data-section="install">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">D</span>
+            <h2>Install on Mini</h2>
+          </div>
+          <span class="section-progress">0 / 4</span>
+        </div>
+        <p class="section-subtitle">30 minutes. Extract to right locations, fix permissions, install Python deps.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Extract the archive into home</span>
+              <code class="cmd-block">cd ~ && tar -xzpf /tmp/daisy-migration.tar.gz
+ls -la ~/daisy ~/gmail-cleanup ~/.scripts ~/Library/LaunchAgents/com.daisy.* | head -30</code>
+              <span class="item-note">The <code>-p</code> flag preserves the permissions baked into the archive (so token files stay <code>600</code>).</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Double-check token file permissions</span>
+              <code class="cmd-block">stat -f "%Sp %N" ~/daisy/.seats-aero-token ~/daisy/.todoist-token ~/gmail-cleanup/token.json ~/.config/google-calendar-mcp/tokens.json</code>
+              <span class="item-note">Should show <code>-rw-------</code> (0600) or stricter. If too open: <code>chmod 600 &lt;file&gt;</code>.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Install Python deps for Daisy scripts</span>
+              <code class="cmd-block">pip3 install --user google-api-python-client google-auth-oauthlib requests
+# add more as failures surface during smoke tests</code>
+              <span class="item-note">Start minimal — let smoke tests surface what else is needed. Some scripts may use additional libraries.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-4" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Confirm shell scripts are executable</span>
+              <code class="cmd-block">chmod +x ~/daisy/*.sh ~/daisy/bin/*
+ls -la ~/daisy/bin/</code>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- E. OAuth & secrets verification -->
+      <section data-section="oauth">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">E</span>
+            <h2>OAuth &amp; secrets verification</h2>
+          </div>
+          <span class="section-progress">0 / 4</span>
+        </div>
+        <p class="section-subtitle">20 minutes. Test each credential before cutover so re-auth happens here, not under time pressure.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="oa-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Test Gmail OAuth</span>
+              <code class="cmd-block">~/daisy/bin/daisy-gmail-attachment --help
+# then try a real (read-only) command to force token use</code>
+              <span class="item-note">If Google forces re-auth, follow the browser flow. The fix from 2026-05-17 (consent screen published to Production) means the refresh token shouldn't expire on a timer.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="oa-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Test Calendar OAuth</span>
+              <span class="item-note">Easiest test: trigger a script that uses Calendar (e.g., a wedprep dry-run) or invoke the Calendar MCP via a one-shot Claude call.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="oa-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Test Todoist API token</span>
+              <code class="cmd-block">curl -s -H "Authorization: Bearer $(cat ~/daisy/.todoist-token)" \
+  "https://api.todoist.com/rest/v2/projects" | head -c 200</code>
+              <span class="item-note">Should return JSON. If 401: token rotated, regenerate via Todoist settings.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="oa-4" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Test seats.aero token</span>
+              <code class="cmd-block">curl -s -H "Partner-Authorization: $(cat ~/daisy/.seats-aero-token)" \
+  "https://seats.aero/partnerapi/health" | head -c 200</code>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- F. Cutover -->
+      <section data-section="cutover">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">F</span>
+            <h2>Cutover</h2>
+          </div>
+          <span class="section-progress">0 / 5</span>
+        </div>
+        <p class="section-subtitle">10 minutes. The binary Telegram-bot switch. Do this when ready, not during a scheduled fire window.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="cut-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Unload all Daisy LaunchAgents</span>
+              <code class="cmd-block">for f in ~/Library/LaunchAgents/com.daisy.*.plist; do
+  launchctl unload "$f"
+done
+launchctl list | grep com.daisy   # should return nothing</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="cut-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Kill Daisy's tmux session</span>
+              <code class="cmd-block">tmux kill-session -t daisy   # adjust session name if different</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="cut-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Load all Daisy LaunchAgents</span>
+              <code class="cmd-block">for f in ~/Library/LaunchAgents/com.daisy.*.plist; do
+  launchctl load "$f"
+done
+launchctl list | grep com.daisy   # should show 17 with exit code 0</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="cut-4" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Start Daisy's tmux session</span>
+              <span class="item-note">Use whatever start command you currently use on the MacBook (e.g., a <code>start-daisy.sh</code> script or manual <code>tmux new -d -s daisy 'claude ...'</code>).</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="cut-5" />
+            <span class="item-content">
+              <span class="item-title">Send a test message to Daisy on Telegram</span>
+              <span class="item-note">Reply should come from the Mini. If you get the Telegram polling "conflict" error, an old MacBook instance is still running — recheck steps F1 and F2.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- G. Smoke tests -->
+      <section data-section="smoke">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">G</span>
+            <h2>Smoke tests</h2>
+          </div>
+          <span class="section-progress">0 / 5</span>
+        </div>
+        <p class="section-subtitle">30 minutes. Trigger each automation type manually. Don't wait for the schedule.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="smk-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Morning briefing</span>
+              <code class="cmd-block">bash ~/daisy/morning_briefing.sh</code>
+              <span class="item-note">Telegram message should arrive within 60 sec.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="smk-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Award flight watcher</span>
+              <code class="cmd-block">bash ~/daisy/award_flight_watch.sh</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="smk-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Telegram health check</span>
+              <code class="cmd-block">bash ~/daisy/telegram_check.sh; echo "exit=$?"</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="smk-4" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> iMessage send</span>
+              <code class="cmd-block">~/daisy/bin/daisy-imessage send &lt;your-number&gt; "Mini test"</code>
+              <span class="item-note">iMessage needs Full Disk Access for the Terminal app on the Mini. If first send fails: System Settings → Privacy &amp; Security → Full Disk Access → add Terminal.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="smk-5" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Community-group automation</span>
+              <code class="cmd-block">bash ~/.scripts/community_group_message.sh</code>
+              <span class="item-note">The one with the hidden dependency. If this works, the easy-to-miss path is intact.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- H. Nightly restart automation -->
+      <section data-section="restart">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">H</span>
+            <h2>Nightly Daisy restart</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <p class="section-subtitle">15 minutes. New automation to solve session staleness + context bloat in one move.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rst-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Write the restart script</span>
+              <code class="cmd-block">cat &gt; ~/daisy/restart_daisy.sh &lt;&lt;'EOF'
+#!/bin/bash
+tmux kill-session -t daisy 2&gt;/dev/null
+sleep 2
+# replace with your actual Daisy start command:
+tmux new -d -s daisy 'claude --resume daisy'
+EOF
+chmod +x ~/daisy/restart_daisy.sh</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rst-2" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Create the LaunchAgent for 3 AM restart</span>
+              <span class="item-note">Drop a new <code>com.daisy.restart.plist</code> into <code>~/Library/LaunchAgents/</code> with <code>StartCalendarInterval</code> at Hour=3, Minute=0, pointing to <code>~/daisy/restart_daisy.sh</code>. Then <code>launchctl load</code>.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rst-3" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mini">MINI</span> Test by triggering manually</span>
+              <code class="cmd-block">~/daisy/restart_daisy.sh
+sleep 3
+tmux ls | grep daisy</code>
+              <span class="item-note">Should show a fresh daisy session. Send a Telegram message to confirm.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- I. Decommission -->
+      <section data-section="decom">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">I</span>
+            <h2>Decommission MacBook (soft)</h2>
+          </div>
+          <span class="section-progress">0 / 2</span>
+        </div>
+        <p class="section-subtitle">5 minutes. Keep everything — just stop it from running.</p>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dec-1" />
+            <span class="item-content">
+              <span class="item-title"><span class="machine mbp">MBP</span> Confirm no daisy agents are loaded</span>
+              <code class="cmd-block">launchctl list | grep com.daisy   # should return nothing</code>
+              <span class="item-note">If anything still appears: <code>launchctl unload ~/Library/LaunchAgents/com.daisy.*.plist</code> again.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dec-2" />
+            <span class="item-content">
+              <span class="item-title">Don't delete anything on MacBook</span>
+              <span class="item-note">It's your rollback path. Plist files stay. The <code>~/daisy/</code> dir stays. Revisit deletion in 2–4 weeks once you trust the Mini.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+    </main>
+
+    <div class="rollback">
+      <h2>Rollback (if something breaks)</h2>
+      <ol>
+        <li><strong>MINI:</strong> <code>for f in ~/Library/LaunchAgents/com.daisy.*.plist; do launchctl unload "$f"; done</code></li>
+        <li><strong>MINI:</strong> <code>tmux kill-session -t daisy</code></li>
+        <li><strong>MBP:</strong> <code>for f in ~/Library/LaunchAgents/com.daisy.*.plist; do launchctl load "$f"; done</code></li>
+        <li><strong>MBP:</strong> Restart Daisy's tmux session (whatever you normally do)</li>
+        <li>Send a test Telegram message — reply should come from MacBook again</li>
+      </ol>
+      <p>Total time to rollback: ~5 minutes. The MacBook is unchanged — files and configs are intact.</p>
+    </div>
+
+    <div class="page-footer">
+      <p class="footer-note"><strong>When the dust settles:</strong> let things run for a week, then come back to plan the MacBook clean-up (or repurpose).</p>
+      <p class="footer-faint">Progress saves locally in this browser via localStorage.</p>
+      <button class="reset-btn" id="resetBtn">Reset all progress</button>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'daisy-migration-phase1-v1';
+    function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+    function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+    function updateProgress() {
+      const sections = document.querySelectorAll('section[data-section]');
+      let total = 0, checked = 0;
+      sections.forEach(sec => {
+        const boxes = sec.querySelectorAll('input[type="checkbox"]');
+        const c = sec.querySelectorAll('input[type="checkbox"]:checked').length;
+        total += boxes.length; checked += c;
+        const lbl = sec.querySelector('.section-progress');
+        if (lbl) lbl.textContent = `${c} / ${boxes.length}`;
+        sec.classList.toggle('complete', c === boxes.length && boxes.length > 0);
+      });
+      document.getElementById('overallCount').textContent = checked;
+      document.getElementById('overallTotal').textContent = total;
+      document.getElementById('overallFill').style.width = (total === 0 ? 0 : (checked / total) * 100) + '%';
+    }
+    function init() {
+      const state = loadState();
+      document.querySelectorAll('input[type="checkbox"][data-id]').forEach(box => {
+        if (state[box.dataset.id]) box.checked = true;
+        box.addEventListener('change', () => {
+          const s = loadState(); s[box.dataset.id] = box.checked; saveState(s); updateProgress();
+        });
+      });
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        if (!confirm('Reset all checked items?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('input[type="checkbox"]').forEach(b => b.checked = false);
+        updateProgress();
+      });
+      updateProgress();
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

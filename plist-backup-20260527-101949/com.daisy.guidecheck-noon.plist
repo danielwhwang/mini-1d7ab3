@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.daisy.guidecheck-noon</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/hwangda/Daisy/check_practice_guide.py</string>
+        <string>--mode</string>
+        <string>noon</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>1</integer>
+        <key>Hour</key>
+        <integer>12</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/hwangda/Daisy/practice_guide_noon.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/hwangda/Daisy/practice_guide_noon.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/hwangda/Daisy</string>
+</dict>
+</plist>
