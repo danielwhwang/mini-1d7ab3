@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Mac Mini → Daisy · Day 1 Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg: #FBFAF7;
+      --card: #FFFFFF;
+      --border: #E8E3D8;
+      --border-strong: #D6CFC0;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --text-faint: #9CA3AF;
+      --accent: #2D5240;
+      --accent-light: #6B8E6E;
+      --accent-bg: #F0F4F0;
+      --code-bg: #F5F2EB;
+      --shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 24px 96px;
+    }
+
+    /* Header */
+    .page-header { margin-bottom: 48px; }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: 56px;
+      line-height: 1.05;
+      letter-spacing: -0.015em;
+      margin: 0 0 16px;
+      color: var(--text);
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin: 0 0 32px;
+      max-width: 540px;
+    }
+
+    /* Progress card */
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .progress-meta {
+      flex-shrink: 0;
+      min-width: 110px;
+    }
+
+    .progress-count {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 32px;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .progress-count-sep {
+      color: var(--text-faint);
+      font-weight: 400;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+
+    .progress-bar-wrap { flex: 1; }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Sections */
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 28px 8px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s ease;
+    }
+
+    section:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .section-num {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 1.2;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .section-progress {
+      font-size: 13px;
+      color: var(--text-faint);
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    section.complete .section-progress {
+      color: var(--accent);
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .checklist li {
+      border-top: 1px solid var(--border);
+    }
+
+    .checklist li:first-child {
+      border-top: none;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-row input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--card);
+      position: relative;
+    }
+
+    .check-row input[type="checkbox"]:hover {
+      border-color: var(--accent-light);
+    }
+
+    .check-row input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .check-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 1px;
+      width: 6px;
+      height: 11px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      display: block;
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.45;
+      transition: all 0.2s ease;
+    }
+
+    .check-row input:checked ~ .item-content .item-title {
+      color: var(--text-faint);
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+      text-decoration-color: var(--text-faint);
+    }
+
+    .item-note {
+      display: block;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.55;
+    }
+
+    .check-row input:checked ~ .item-content .item-note {
+      opacity: 0.55;
+    }
+
+    code, .cmd {
+      font-family: 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+      font-weight: 500;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .item-note code {
+      font-size: 12px;
+      padding: 1px 5px;
+    }
+
+    .cmd-block {
+      display: block;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-family: 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer-note {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+    }
+
+    .footer-note strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .footer-faint {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin: 12px 0 0;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-faint);
+      font-size: 12px;
+      font-family: inherit;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.15s ease;
+    }
+
+    .reset-btn:hover {
+      color: var(--text-muted);
+      border-color: var(--border-strong);
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .container { padding: 40px 18px 64px; }
+      h1 { font-size: 40px; }
+      .subtitle { font-size: 16px; }
+      section { padding: 22px 20px 4px; border-radius: 12px; }
+      h2 { font-size: 24px; }
+      .progress-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; }
+      .progress-bar-wrap { width: 100%; }
+      .check-row { padding: 14px 0; }
+      .check-row input[type="checkbox"] { width: 22px; height: 22px; }
+      .check-row input[type="checkbox"]:checked::after { left: 6px; top: 1px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <div class="eyebrow">Migration · Phase 0</div>
+      <h1>Mac Mini → <em>Daisy</em></h1>
+      <p class="subtitle">Day 1 setup. Fresh macOS install through ready-for-migration. Work top to bottom — every step is small.</p>
+      <div class="progress-card">
+        <div class="progress-meta">
+          <div class="progress-count">
+            <span id="overallCount">0</span><span class="progress-count-sep"> / </span><span id="overallTotal">0</span>
+          </div>
+          <div class="progress-label">complete</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="overallFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+
+      <!-- 1. Pre-flight -->
+      <section data-section="preflight">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">01</span>
+            <h2>Pre-flight</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pre-1" />
+            <span class="item-content">
+              <span class="item-title">Have keyboard, mouse, and a display ready</span>
+              <span class="item-note">First-boot setup requires physical input. After SSH is enabled, you can run headless.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pre-2" />
+            <span class="item-content">
+              <span class="item-title">Confirm nothing on the Mini is worth keeping</span>
+              <span class="item-note">OpenClaw setup is disposable. If unsure, boot once and skim <code>~/Documents</code>, <code>~/Desktop</code>, <code>~/Downloads</code> before wiping.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="pre-3" />
+            <span class="item-content">
+              <span class="item-title">Plug into Ethernet if possible</span>
+              <span class="item-note">Wired beats Wi-Fi for an always-on machine. If Ethernet isn't an option, Wi-Fi is fine.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 2. Reformat & Install macOS -->
+      <section data-section="install">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">02</span>
+            <h2>Reformat &amp; Install macOS</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-1" />
+            <span class="item-content">
+              <span class="item-title">Erase All Content and Settings</span>
+              <span class="item-note">System Settings → General → Transfer or Reset → Erase All Content and Settings. Fast and clean — no Recovery Mode needed unless this fails.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-2" />
+            <span class="item-content">
+              <span class="item-title">Install the latest macOS (Sequoia 15.x or later)</span>
+              <span class="item-note">A fresh install means no carry-over driver baggage from the MacBook's old 14.6.1.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ins-3" />
+            <span class="item-content">
+              <span class="item-title">Complete the initial Setup Assistant</span>
+              <span class="item-note">Skip Apple Intelligence prompts if you want, sign in to iCloud, set timezone to Pacific.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 3. User Account & Identity -->
+      <section data-section="identity">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">03</span>
+            <h2>User Account &amp; Identity</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="id-1" />
+            <span class="item-content">
+              <span class="item-title">Set username to <code>hwangda</code></span>
+              <span class="item-note"><strong>Critical for Daisy migration.</strong> Matching the MacBook username means all 16 LaunchAgent plists and every hardcoded path in <code>~/daisy</code> will just work after rsync.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="id-2" />
+            <span class="item-content">
+              <span class="item-title">Set the computer name to <code>daisy-mini</code></span>
+              <span class="item-note">System Settings → General → About → Name. Makes the Mini easy to identify on your network (Tigard, Tailscale, etc.).</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="id-3" />
+            <span class="item-content">
+              <span class="item-title">Set a strong password and enable Touch ID (if peripherals support it)</span>
+              <span class="item-note">You'll mostly SSH in, but local login still matters for FileVault unlock after reboots.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 4. Always-On Reliability -->
+      <section data-section="reliability">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">04</span>
+            <h2>Always-On Reliability</h2>
+          </div>
+          <span class="section-progress">0 / 6</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-1" />
+            <span class="item-content">
+              <span class="item-title">Prevent automatic sleep when display is off</span>
+              <span class="item-note">System Settings → Energy. The whole point of the Mini is that Daisy never sleeps.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-2" />
+            <span class="item-content">
+              <span class="item-title">Start up automatically after a power failure</span>
+              <span class="item-note">System Settings → Energy. So Daisy comes back without you noticing the outage.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-3" />
+            <span class="item-content">
+              <span class="item-title">Enable "Wake for network access"</span>
+              <span class="item-note">Lets you wake the Mini via SSH or Wake-on-LAN from your phone or MacBook.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-4" />
+            <span class="item-content">
+              <span class="item-title">Disable screen lock and screen saver</span>
+              <span class="item-note">System Settings → Lock Screen → set everything to "Never." Daisy doesn't need a screensaver.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-5" />
+            <span class="item-content">
+              <span class="item-title">Schedule macOS updates for off-hours</span>
+              <span class="item-note">System Settings → General → Software Update → Advanced. Auto-update at 3 AM, not during your Sunday briefing window.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rel-6" />
+            <span class="item-content">
+              <span class="item-title">Disable automatic display sleep (or set to 3+ hours)</span>
+              <span class="item-note">If no display is attached, this is moot. If one is attached, long sleep avoids the LG-ultrawide-style DCP crashes.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 5. Remote Access -->
+      <section data-section="remote">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">05</span>
+            <h2>Remote Access</h2>
+          </div>
+          <span class="section-progress">0 / 4</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rem-1" />
+            <span class="item-content">
+              <span class="item-title">Enable Remote Login (SSH)</span>
+              <span class="item-note">System Settings → General → Sharing → toggle on Remote Login. Restrict to your user (<code>hwangda</code>) only.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rem-2" />
+            <span class="item-content">
+              <span class="item-title">Note the Mini's local IP address</span>
+              <span class="item-note">Run on the Mini, then write it down:</span>
+              <code class="cmd-block">ipconfig getifaddr en0   # or en1 for Wi-Fi</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rem-3" />
+            <span class="item-content">
+              <span class="item-title">Reserve the IP in your router's DHCP settings</span>
+              <span class="item-note">So the Mini's IP doesn't change after a router reboot. Most routers: Connected Devices → find the Mini → "Reserve IP."</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="rem-4" />
+            <span class="item-content">
+              <span class="item-title">Test SSH from MacBook</span>
+              <span class="item-note">From the MacBook terminal, replace the IP and confirm <code>whoami</code> returns <code>hwangda</code>:</span>
+              <code class="cmd-block">ssh hwangda@192.168.x.x
+whoami</code>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 6. Developer Foundations -->
+      <section data-section="dev">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">06</span>
+            <h2>Developer Foundations</h2>
+          </div>
+          <span class="section-progress">0 / 7</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-1" />
+            <span class="item-content">
+              <span class="item-title">Install Xcode Command Line Tools</span>
+              <code class="cmd-block">xcode-select --install</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-2" />
+            <span class="item-content">
+              <span class="item-title">Install Homebrew</span>
+              <code class="cmd-block">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-3" />
+            <span class="item-content">
+              <span class="item-title">Install core CLI tools</span>
+              <code class="cmd-block">brew install tmux gh node python@3.12</code>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-4" />
+            <span class="item-content">
+              <span class="item-title">Install Claude Code</span>
+              <span class="item-note">Follow the official installer at <code>docs.claude.com/en/docs/claude-code</code> — typically one curl command.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-5" />
+            <span class="item-content">
+              <span class="item-title">Sign in to Claude Code with your Anthropic account</span>
+              <span class="item-note">Use the same account as the MacBook so your Max subscription carries over.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-6" />
+            <span class="item-content">
+              <span class="item-title">Authenticate gh CLI</span>
+              <code class="cmd-block">gh auth login</code>
+              <span class="item-note">Use the <code>danielwhwang</code> account, HTTPS protocol — matches the MacBook setup.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="dev-7" />
+            <span class="item-content">
+              <span class="item-title">Verify versions look reasonable</span>
+              <code class="cmd-block">python3 --version
+tmux -V
+gh --version
+claude --version</code>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 7. Security -->
+      <section data-section="security">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">07</span>
+            <h2>Security</h2>
+          </div>
+          <span class="section-progress">0 / 3</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="sec-1" />
+            <span class="item-content">
+              <span class="item-title">Enable FileVault disk encryption</span>
+              <span class="item-note">System Settings → Privacy &amp; Security → FileVault. Save the recovery key in your password manager.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="sec-2" />
+            <span class="item-content">
+              <span class="item-title">Enable the Firewall</span>
+              <span class="item-note">System Settings → Network → Firewall → On.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="sec-3" />
+            <span class="item-content">
+              <span class="item-title">Optional: install Tailscale for remote-from-anywhere access</span>
+              <span class="item-note">Trusted first-party-ish tool. Lets you SSH in from outside your home network without opening ports. Skip if local-only is enough.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+      <!-- 8. Verification & Handoff -->
+      <section data-section="verify">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="section-num">08</span>
+            <h2>Verification &amp; Handoff</h2>
+          </div>
+          <span class="section-progress">0 / 4</span>
+        </div>
+        <ul class="checklist">
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ver-1" />
+            <span class="item-content">
+              <span class="item-title">SSH in from MacBook, run <code>whoami</code> → should return <code>hwangda</code></span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ver-2" />
+            <span class="item-content">
+              <span class="item-title">Test reboot resilience</span>
+              <span class="item-note">From SSH: <code>sudo shutdown -r now</code> — wait two minutes, SSH back in to confirm the Mini comes back clean.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ver-3" />
+            <span class="item-content">
+              <span class="item-title">Walk away for 30 minutes, then SSH back in</span>
+              <span class="item-note">Confirms the always-on settings actually held.</span>
+            </span>
+          </label></li>
+          <li><label class="check-row">
+            <input type="checkbox" data-id="ver-4" />
+            <span class="item-content">
+              <span class="item-title">Document IP, hostname, and Tailscale name (if used)</span>
+              <span class="item-note">Save to your password manager or a private note. You'll want it for the Daisy migration session.</span>
+            </span>
+          </label></li>
+        </ul>
+      </section>
+
+    </main>
+
+    <div class="page-footer">
+      <p class="footer-note"><strong>Next up:</strong> a separate Claude Code session for the actual Daisy migration. Estimate: 4–6 focused hours.</p>
+      <p class="footer-faint">Progress saves locally in this browser via localStorage.</p>
+      <button class="reset-btn" id="resetBtn">Reset all progress</button>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'daisy-mini-setup-v1';
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function updateProgress() {
+      const sections = document.querySelectorAll('section[data-section]');
+      let overallTotal = 0;
+      let overallChecked = 0;
+
+      sections.forEach(section => {
+        const boxes = section.querySelectorAll('input[type="checkbox"]');
+        const checked = section.querySelectorAll('input[type="checkbox"]:checked').length;
+        const total = boxes.length;
+        overallTotal += total;
+        overallChecked += checked;
+
+        const label = section.querySelector('.section-progress');
+        if (label) label.textContent = `${checked} / ${total}`;
+        section.classList.toggle('complete', checked === total && total > 0);
+      });
+
+      document.getElementById('overallCount').textContent = overallChecked;
+      document.getElementById('overallTotal').textContent = overallTotal;
+      const pct = overallTotal === 0 ? 0 : (overallChecked / overallTotal) * 100;
+      document.getElementById('overallFill').style.width = pct + '%';
+    }
+
+    function init() {
+      const state = loadState();
+      const boxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+
+      boxes.forEach(box => {
+        const id = box.dataset.id;
+        if (state[id]) box.checked = true;
+        box.addEventListener('change', () => {
+          const s = loadState();
+          s[box.dataset.id] = box.checked;
+          saveState(s);
+          updateProgress();
+        });
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        if (!confirm('Reset all checked items?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('input[type="checkbox"]').forEach(b => b.checked = false);
+        updateProgress();
+      });
+
+      updateProgress();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
